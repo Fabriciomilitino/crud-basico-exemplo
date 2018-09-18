@@ -5,3 +5,14 @@ body {
     padding: 3rem 1.5rem;
     text-align: center;
 }
+
+/* .btn-group .dropdown-toggle.btn-secondary ~ .dropdown-menu {
+    background-color: #d5d4d4;
+    border-color: #b7b6b6;
+} */
+.btn-group .dropdown-toggle.btn-secondary ~ .dropdown-menu .dropdown-item {
+    color: #000;
+}
+.no-wrap {
+    white-space: nowrap;
+}

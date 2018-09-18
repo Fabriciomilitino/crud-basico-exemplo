@@ -1,4 +1,14 @@
+<?php
+    session_start();
 
+    include('inc/conexao.php');
+
+    $sql = "SELECT * FROM contatos ORDER BY id DESC";
+    $consulta = $conexao->prepare($sql);
+    $consulta->execute();
+
+    $registros = $consulta->fetchAll(PDO::FETCH_OBJ);
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,21 +16,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../../../favicon.ico">
+    <link rel="icon" href="/images/favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
+    <title>MS_Cad</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/css/styles.css" rel="stylesheet">
+    <link href="/css/icofont.min.css" rel="stylesheet">
 </head>
 
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">MS_Cad</a>
+    <a class="navbar-brand" href="/">MS_Cad</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -28,7 +39,7 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="contatos.php">Contatos</a>
@@ -56,51 +67,107 @@
 
     <div class="row">
         <div class="col">
-            <h2>Contatos</h2>
+            <h2>Contatos 
+                <a href="contatos_cad.php" class="btn btn-primary btn-sm">Adicionar contato</a>
+            </h2> 
 
-            <table class="table ">
+            <?php if(isset($_SESSION['del']) && $_SESSION['del']): ?>
+            <div class="alert alert-dismissible alert-info">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+                O registro #<?php echo $_SESSION['del'] ?> foi excluindo.
+            </div>
+            <?php unset($_SESSION['del']) ?>
+            <?php endif ?>
+            
+            <table class="table">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Nome</th>
                         <th>Telefone</th>
                         <th>E-mail</th>
-                        <th>Opções</th>
+                        <th width="1">Opções</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php for($i=0; $i<=5; $i++): ?>
+                    <?php $i=1; foreach($registros as $r): ?>
                     <tr>
-                        <td><?php echo $i+1 ?></td>
-                        <td>João</td>
-                        <td>69 952-654-452</td>
-                        <td>joao.teixeira@ifro.edu.br</td>
+                        <td><?php echo $i++ ?></td>
                         <td>
-                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                <button type="button" class="btn btn-info">Ações</button>
-                                <div class="btn-group" role="group">
-                                    <button id="btnGroupDrop3" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop3">
-                                        <a class="dropdown-item" href="#">Dropdown link</a>
-                                        <a class="dropdown-item" href="#">Dropdown link</a>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php echo $r->nome ?>
+
+                            <?php if(isset($_SESSION['new'][$r->id])): ?>
+                                <span class="badge badge-warning">Novo</span>
+                            <?php if($_SESSION['new'][$r->id] < 7) { ($_SESSION['new'][$r->id]++); } else { unset($_SESSION['new'][$r->id]); } ?>
+                            <?php endif ?>
+                        </td>
+                        <td><?php echo $r->fone ?></td>
+                        <td><?php echo $r->email ?></td>
+                        <td class="no-wrap">
+                            <form id="form_<?php echo $r->id ?>" action="contatos_delete.php" method="post" onsubmit="">
+                                <a href="contatos_update.php?id=<?php echo $r->id ?>" class="btn btn-secondary active">
+                                    <i class="icofont-edit"></i> Atualizar</a>
+
+                                <input type="hidden" name="id" value="<?php echo $r->id ?>">
+                                <button type="button" class="btn btn-secondary active excluir" data-name="<?php echo $r->nome ?>" data-id="<?php echo $r->id ?>">
+                                    <i class="icofont-ui-delete"></i> Excluir</button>
+                            </form>
+                            
                         </td>
                     </tr>
-                    <?php endfor ?>
+                    <?php endforeach ?>
                 </tbody>
             </table>
         </div>
     </div>
 
-</main><!-- /.container -->
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
+</main>
 <script src="/js/jquery-3.3.1.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.26.29/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+
+        $('.excluir').click(function(){
+
+            var id = $(this).attr('data-id'),
+                nome = $(this).attr('data-name');
+    
+            const swalWithBootstrapButtons = swal.mixin({
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            buttonsStyling: false,
+            });
+
+            swalWithBootstrapButtons({
+                title: 'Deseja excluir o contato "' + nome + '"?',
+                text: "Essa ação não poderá ser desfeita!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim, excluir item!',
+                cancelButtonText: 'Não, cancelar!',
+                reverseButtons: true
+                }).then((result) => {
+                    if (result.value) {
+                        $('#form_' + id).submit();
+                        // swalWithBootstrapButtons(
+                        // 'Deleted!',
+                        // 'Your file has been deleted.',
+                        // 'success'
+                        // )
+                    } else if (result.dismiss === swal.DismissReason.cancel) {
+                        // swalWithBootstrapButtons(
+                        // 'Cancelled',
+                        // 'Your imaginary file is safe :)',
+                        // 'error'
+                        // )
+                    }
+            })
+        });
+    });
+</script>
 </body>
 </html>
