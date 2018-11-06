@@ -1,17 +1,18 @@
 <?php
-    include('inc/conexao.php'); 
+    include('inc/conexao.php');
 
-    if(!empty($_POST['id']) && !empty($_POST['nome']) && !empty($_POST['email']) && !empty($_POST['fone'])) {
+    if(!empty($_POST['id']) && !empty($_POST['nome']) && !empty($_POST['email']) && !empty($_POST['fone']) && !empty($_POST['grupo_id'])) {
 
-        $sql = "UPDATE contatos SET nome = :nome, email = :email, fone = :fone WHERE id = :id";
-        
+        $sql = "UPDATE contatos SET nome = :nome, email = :email, fone = :fone, grupo_id = :grupo WHERE id = :id";
+
         $inserir = $conexao->prepare( $sql );
-        
+
         $inserir->bindValue( ':nome', $_POST['nome'] );
         $inserir->bindValue( ':email', $_POST['email'] );
         $inserir->bindValue( ':fone', $_POST['fone'] );
         $inserir->bindValue( ':id', $_POST['id'] );
-        
+        $inserir->bindValue( ':grupo', $_POST['grupo_id'] );
+
         $result = $inserir->execute();
 
     }
@@ -74,7 +75,7 @@
 
     <div class="row">
         <div class="col">
-            <h2>Contatos</h2> 
+            <h2>Contatos</h2>
         </div>
     </div>
     <hr>
@@ -90,7 +91,7 @@
     <?php if(isset($result) && !$result): ?>
     <h3 class="text-center text-danger">
         <i class="icofont-close-circled"></i> <?php $inserir->errorInfo()[2] ? $stmt->errorInfo()[2] : 'Erro ao tentar salvar' ?>. Tente novamente!</h3>
-    
+
     <p class="text-center">
         <a href="javascript:history.go(-1)"  >&laquo; Voltar</a>
     </p>
@@ -99,7 +100,7 @@
     <?php if(!isset($result)): ?>
     <h3 class="text-center text-danger">
         <i class="icofont-close-circled"></i> Favor preencher corretamente o formulário!</h3>
-    
+
     <p class="text-center">
         <a href="javascript:history.go(-1)"  >&laquo; Voltar</a>
     </p>

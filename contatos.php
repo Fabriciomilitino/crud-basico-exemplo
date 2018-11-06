@@ -3,7 +3,7 @@
 
     include('inc/conexao.php');
 
-    $sql = "SELECT * FROM contatos ORDER BY id DESC";
+    $sql = "SELECT c.*, g.nome AS grupo FROM contatos c LEFT JOIN grupos g ON g.id = c.grupo_id ORDER BY c.id DESC";
     $consulta = $conexao->prepare($sql);
     $consulta->execute();
 
@@ -67,9 +67,9 @@
 
     <div class="row">
         <div class="col">
-            <h2>Contatos 
+            <h2>Contatos
                 <a href="contatos_cad.php" class="btn btn-primary btn-sm">Adicionar contato</a>
-            </h2> 
+            </h2>
 
             <?php if(isset($_SESSION['del']) && $_SESSION['del']): ?>
             <div class="alert alert-dismissible alert-info">
@@ -79,11 +79,12 @@
             </div>
             <?php unset($_SESSION['del']) ?>
             <?php endif ?>
-            
+
             <table class="table">
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Grupo</th>
                         <th>Nome</th>
                         <th>Telefone</th>
                         <th>E-mail</th>
@@ -94,6 +95,7 @@
                     <?php $i=1; foreach($registros as $r): ?>
                     <tr>
                         <td><?php echo $i++ ?></td>
+                        <td><?php echo $r->grupo ?></td>
                         <td>
                             <?php echo $r->nome ?>
 
@@ -113,7 +115,7 @@
                                 <button type="button" class="btn btn-secondary active excluir" data-name="<?php echo $r->nome ?>" data-id="<?php echo $r->id ?>">
                                     <i class="icofont-ui-delete"></i> Excluir</button>
                             </form>
-                            
+
                         </td>
                     </tr>
                     <?php endforeach ?>
@@ -135,7 +137,7 @@
 
             var id = $(this).attr('data-id'),
                 nome = $(this).attr('data-name');
-    
+
             const swalWithBootstrapButtons = swal.mixin({
             confirmButtonClass: 'btn btn-success',
             cancelButtonClass: 'btn btn-danger',

@@ -2,7 +2,7 @@
     include('inc/conexao.php');
 
     if(!empty($_GET['id'])) {
-        
+
         $id =  filter_var($_GET['id']);
 
         $sql = "SELECT * FROM contatos WHERE id = :id";
@@ -11,7 +11,13 @@
         $resultado = $consulta->execute();
 
         $registro = $consulta->fetch(PDO::FETCH_OBJ);
-    }   
+
+        $sql = 'SELECT * FROM grupos ORDER BY nome ASC';
+        $consulta = $conexao->prepare($sql);
+        $resultado = $consulta->execute();
+
+        $registros_grupo = $consulta->fetchAll(PDO::FETCH_OBJ);
+    }
 ?>
 <!doctype html>
 <html lang="en">
@@ -71,7 +77,7 @@
 
     <div class="row">
         <div class="col">
-            <h2>Contatos <small>&raquo; Atualização de contato #<?php echo $registro->id ?></small></h2> 
+            <h2>Contatos <small>&raquo; Atualização de contato #<?php echo $registro->id ?></small></h2>
         </div>
     </div>
     <hr>
@@ -97,15 +103,31 @@
                 </div>
             </div>
 
+            <div class="col col-4">
+                <div class="form-group">
+                    <label for="">Grupo</label>
+                    <select class="form-control" name="grupo_id">
+                        <option value="">Selecione um grupo</option>
+
+                        <?php foreach($registros_grupo as $g) { ?>
+                            <option value="<?php echo $g->id ?>"
+                                <?php if($registro->grupo_id == $g->id) echo 'selected'; ?>><?php echo $g->nome ?>
+                            </option>
+                        <?php } ?>
+
+                    </select>
+                </div>
+            </div>
+
             <div class="col-12">
                 <input type="hidden" name="id" value="<?php echo $registro->id ?>">
                 <button class="btn btn-lg btn-success btn-block">
                     <i class="icofont-save"></i> Salvar</button>
             </div>
-               
-            
-            
-            
+
+
+
+
         </div>
     </form>
 
