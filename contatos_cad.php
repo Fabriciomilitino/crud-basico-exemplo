@@ -1,4 +1,5 @@
 <?php
+    include('auth/verificarAutenticacao.php');
     include('inc/conexao.php');
 
     $sql = 'SELECT * FROM grupos ORDER BY nome ASC';

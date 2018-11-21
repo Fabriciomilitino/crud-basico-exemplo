@@ -1,6 +1,5 @@
 <?php
-    session_start();
-
+    include('auth/verificarAutenticacao.php');
     include('inc/conexao.php');
 
     $sql = "SELECT c.*, g.nome AS grupo FROM contatos c LEFT JOIN grupos g ON g.id = c.grupo_id ORDER BY c.id DESC";

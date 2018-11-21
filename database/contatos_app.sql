@@ -20,6 +20,17 @@ CREATE TABLE contatos (
     FOREIGN KEY(grupo_id) REFERENCES grupos(id)
 );
 
+CREATE TABLE usuarios (
+  id INT NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  login VARCHAR(100) NOT NULL,
+  senha VARCHAR(100) NOT NULL,
+  PRIMARY KEY(id)
+);
+
+INSERT INTO usuarios VALUES (null, 'João', 'joao@spacedevapp.com', 'joao', SHA2('ads_web_v_12345', '256'));
+
 SELECT * FROM grupos;
 SELECT * FROM contatos;
 

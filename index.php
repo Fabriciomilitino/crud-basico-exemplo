@@ -1,4 +1,8 @@
+<?php
+    include('auth/verificarAutenticacao.php');
 
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -33,6 +37,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="contatos.php">Contatos</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/auth/logout.php">Sair do sistema</a>
+            </li>
 <!--            <li class="nav-item">-->
 <!--                <a class="nav-link disabled" href="#">Disabled</a>-->
 <!--            </li>-->
@@ -55,7 +62,7 @@
 <main role="main" class="container">
 
     <div class="starter-template">
-        <h1>Bem vindo ao MS_Cad</h1>
+        <h1>Bem vindo Sr. <?php echo $_SESSION['authLogin'] ?> ao MS_Cad</h1>
         <p class="lead">Selecione uma opção no menu.</p>
     </div>
 

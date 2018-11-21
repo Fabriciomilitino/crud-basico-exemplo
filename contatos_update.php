@@ -1,4 +1,5 @@
 <?php
+    include('auth/verificarAutenticacao.php');
     include('inc/conexao.php');
 
     if(!empty($_GET['id'])) {

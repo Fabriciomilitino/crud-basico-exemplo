@@ -1,4 +1,5 @@
 <?php
+    include('auth/verificarAutenticacao.php');
     include('inc/conexao.php');
 
     if(!empty($_POST['id']) && !empty($_POST['nome']) && !empty($_POST['email']) && !empty($_POST['fone']) && !empty($_POST['grupo_id'])) {
